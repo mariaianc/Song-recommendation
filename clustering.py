@@ -146,20 +146,71 @@ def interpret_clusters(data):
 
     return data
 
-def recommend_songs_based_on_cluster(data, token):
+# def recommend_songs_based_on_cluster(data, token):
+#     """
+#     Recommend songs based on the cluster of a user-provided song.
+#     """
+#     # Ask user for the song details
+#     song_name = input("Enter the title of the song: ").strip()
+#     artist_name = input("Enter the artist of the song: ").strip()
+#
+#     # Search for the song on Spotify
+#     song_info = search_song(token, song_name)
+#
+#     if song_info["artist_name"] == "N/A":
+#         print("Sorry, the song was not found on Spotify.")
+#         return
+#
+#     print(f"Song found: {song_info['track_name']} by {song_info['artist_name']}")
+#
+#     # Preprocess the song data to fit the clustering model
+#     song_features = pd.DataFrame([song_info])
+#     song_features['popularity_normalized'] = song_features['popularity'] / 100
+#     song_features['duration_min'] = song_features['duration_ms'] / 60000
+#     min_duration = data['duration_min'].min()
+#     max_duration = data['duration_min'].max()
+#     song_features['duration_normalized'] = (song_features['duration_min'] - min_duration) / (max_duration - min_duration)
+#
+#     # Prepare the one-hot encoding for genres
+#     genres = data.columns[data.columns.str.startswith('primary_genre_')]
+#     genre_data = {genre: 0 for genre in genres}
+#     if f"primary_genre_{song_info['primary_genre']}" in genre_data:
+#         genre_data[f"primary_genre_{song_info['primary_genre']}"] = 1
+#
+#     # Add the genre data to the song features
+#     for genre, value in genre_data.items():
+#         song_features[genre] = value
+#
+#     # Align columns with the clustered data
+#     features_for_clustering = data.drop(['track_name', 'artist_name', 'album_name', 'track_url', 'cluster', 'pca_1', 'pca_2'], axis=1).columns
+#     song_features = song_features.reindex(columns=features_for_clustering, fill_value=0)
+#
+#     # Predict the cluster for the new song
+#     X = data.drop(['track_name', 'artist_name', 'album_name', 'track_url', 'cluster', 'pca_1', 'pca_2'], axis=1)
+#     kmeans = KMeans(n_clusters=data['cluster'].nunique(), random_state=42)
+#     kmeans.fit(X)
+#
+#     new_song_cluster = kmeans.predict(song_features)[0]
+#     print(f"The song belongs to cluster {new_song_cluster}")
+#
+#     # Recommend songs from the same cluster
+#     recommendations = data[data["cluster"] == new_song_cluster]
+#     recommendations = recommendations[["track_name", "artist_name", "album_name", "track_url"]]
+#
+#     # Save the recommendations to a CSV file
+#     recommendations.to_csv("recommendations.csv", index=False)
+#     print("Recommendations have been saved to 'recommendations.csv'.")
+
+def recommend_songs_based_on_cluster(data, token, song_name, artist_name):
     """
     Recommend songs based on the cluster of a user-provided song.
     """
-    # Ask user for the song details
-    song_name = input("Enter the title of the song: ").strip()
-    artist_name = input("Enter the artist of the song: ").strip()
-
-    # Search for the song on Spotify
+    # Search for the song on Spotify (This should be replaced with your actual search function)
     song_info = search_song(token, song_name)
 
     if song_info["artist_name"] == "N/A":
         print("Sorry, the song was not found on Spotify.")
-        return
+        return None
 
     print(f"Song found: {song_info['track_name']} by {song_info['artist_name']}")
 
@@ -200,3 +251,6 @@ def recommend_songs_based_on_cluster(data, token):
     # Save the recommendations to a CSV file
     recommendations.to_csv("recommendations.csv", index=False)
     print("Recommendations have been saved to 'recommendations.csv'.")
+
+    # Return recommendations as a DataFrame
+    return recommendations
